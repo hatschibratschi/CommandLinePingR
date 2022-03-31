@@ -2,18 +2,20 @@ library(pingr)
 library(data.table)
 #print('args: timeout rows')
 
+# create a file myserver.R with:
+# servers = list(
+#   amazonDE = 'amazon.de'
+#   , sohoRadio = 'sohoradiolondon.com'
+#   , gateway = '192.168.0.1'
+# )
+source('myservers.R')
+
 args = commandArgs(trailingOnly = TRUE)
 timeout = 10;rows = 7
 if (length(args) > 0){
   timeout = args[1]
   rows = args[2]
 }
-
-servers = list(
-    amazonDE = 'amazon.de'
-  , sohoRadio = 'sohoradiolondon.com'
-  , gateway = '192.168.0.1'
-)
 
 getPing = function(l){
   d = sapply(servers, function(x){
@@ -24,7 +26,12 @@ getPing = function(l){
   d
 }
 
-p = NULL
+# prepare empty data.table
+p = as.data.table(servers)
+p = cbind(data.table(time = Sys.time()), p)
+p[1,] = '' # set all lines to ''
+p = do.call("rbind", replicate(rows, p, simplify = FALSE))
+
 while(TRUE){
   p = rbind(p, getPing(servers))
   p = tail(p, rows)
