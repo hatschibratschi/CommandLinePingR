@@ -26,13 +26,13 @@ getPing = function(servers){
     round(p, 0)
   })
   d = (as.data.table(as.list(d)))
-  d = cbind(data.table(time = Sys.time()), d)
+  d = cbind(data.table(time = format(Sys.time(), "%H:%M:%S")), d)
   d
 }
 
 # prepare empty data.table
 p = as.data.table(servers)
-p = cbind(data.table(time = Sys.time()), p)
+p = cbind(data.table(time = format(Sys.time(), "%H:%M:%S")), p)
 p[1,] = '' # set all lines to ''
 p = do.call("rbind", replicate(rows, p, simplify = FALSE))
 
